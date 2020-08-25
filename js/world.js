@@ -247,6 +247,10 @@ var WorldScene = new Phaser.Class({
         this.enemies = [];
         this.players = [];
         this.currentSelectedPlayer = null; //enemy, player, anything. player on the current turn gets selected
+        this.index = -1; //index for selecting the current unit
+
+        this.move_phase = false;
+        this.skill_phase = false;
 
         
         //  animation with key 'left', we don't need left and right as we will use one and flip the sprite
@@ -563,7 +567,7 @@ var WorldScene = new Phaser.Class({
         this.reena.anims.play('up', true);
         unitReenaStats = new unitStats(50, 5, 5, 5, 10); //weight determines how much knockback happens
         reenaAnimations = ['left', 'right', 'attack', 'defeated'];
-        unitReena = new unitInformation(this.reena, "Reena", reenaAnimations, "reenasprite", null, unitReenaStats, null, null, 1);
+        unitReena = new unitInformation(this.reena, "Reena", reenaAnimations, "reenasprite", null, unitReenaStats, null, null, true);
         //create then push to player
         this.players.push(unitReena);
 
@@ -571,9 +575,10 @@ var WorldScene = new Phaser.Class({
         this.yune.anims.play('rightyune', true);
         unitYuneStats = new unitStats(50, 5, 5, 5, 10);
         yuneAnimations = ['leftyune', 'rightyune', 'attackyune', 'defeatedyune'];
-        unitYune = new unitInformation(this.yune, "Yune", yuneAnimations, "yunesprite", null, unitYuneStats, null, null, 1);
+        unitYune = new unitInformation(this.yune, "Yune", yuneAnimations, "yunesprite", null, unitYuneStats, null, null, true);
         this.enemies.push(unitYune);
         
+        this.nextTurn(); //initialize the next turn
     },
     /*Structure
     NEXTTURN => ONCLICK CALL RELEASE => ON VELOCITY 0 CALL ACTIVATE SKILL 
@@ -586,11 +591,26 @@ var WorldScene = new Phaser.Class({
     //spawn an arrow near the player that increaes/decreases in length depending on the current global pointer
     //Release is calculated differently depending on the pointer position and power, weight, stats ect. 
     nextTurn: function(){
+        unitArray = this.players.concat(this.enemies); 
+        if (this.checkEndBattle()){
+            this.endBattle();
+            return;
+        }
+        do {
+            this.index++; //increment index
+            if (this.index >= unitArray.length){
+                this.index = 0;
+            }
+            this.currentSelectedPlayer = unitArray[this.index];
+            this.move_phase = true;
+            alert(unitArray[this.index].unitName + "'s turn");
+        } while (!unitArray[this.index].living);
 
     },
 
     //next turn event into release function, release function checks for player velocity, if 0, trigger skill
     release: function(unitInformation){
+        //alert(unitInformation.unitName);
 
     },
 
@@ -600,7 +620,14 @@ var WorldScene = new Phaser.Class({
 
     },
 
-    
+    checkEndBattle: function(){
+        //check if one side perishes
+    },
+
+    endBattle: function(){
+        //ends the battle
+        alert("you win!");
+    },
 
 
     //
@@ -617,51 +644,13 @@ var WorldScene = new Phaser.Class({
 
     //update collision status and stuff, maybe save currentPlayer as a global to keep track of velocity info
     update: function (time, delta)
-    {             
-        this.reena.body.setVelocity(0);
-        
-        // Horizontal movement
-        if (this.cursors.left.isDown)
-        {
-            this.reena.body.setVelocityX(-550);
-        }
-        else if (this.cursors.right.isDown)
-        {
-            this.reena.body.setVelocityX(550);
-        }
-        // Vertical movement
-        if (this.cursors.up.isDown)
-        {
-            this.reena.body.setVelocityY(-550);
-        }
-        else if (this.cursors.down.isDown)
-        {
-            this.reena.body.setVelocityY(550);
-        }        
-
-        // Update the animation last and give left/right animations precedence over up/down animations
-        if (this.cursors.left.isDown)
-        {
-            this.reena.anims.play('left', true);
-            //this.reena.flipX = true;
-        }
-        else if (this.cursors.right.isDown)
-        {
-            this.reena.anims.play('right', true);
-            this.reena.flipX = false;
-        }
-        else if (this.cursors.up.isDown)
-        {
-            this.reena.anims.play('up', true);
-        }
-        else if (this.cursors.down.isDown)
-        {
-            this.reena.anims.play('down', true);
-        }
-        else
-        {
-            //this.reena.anims.stop();
-            this.reena.body.setVelocity(0);
+    {
+        console.log(this.move_phase);
+        if(this.move_phase === true){             
+            this.input.on('pointerdown', (pointer) => {
+                this.release(this.currentSelectedPlayer);
+                this.move_phase = false;
+            })
         }
     }
 
