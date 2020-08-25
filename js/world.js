@@ -159,7 +159,7 @@ var BootScene = new Phaser.Class({
         }).setInteractive();
 
         text1.on('pointerdown', ()=>{
-            this.scene.start('DialogScene');
+            this.scene.start('WorldScene');
         });
 
         var text2 = this.add.text(185,
@@ -536,6 +536,8 @@ var WorldScene = new Phaser.Class({
             repeat: -1
         });
     },
+
+    
 
 });
 
