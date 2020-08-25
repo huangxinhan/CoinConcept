@@ -246,6 +246,7 @@ var WorldScene = new Phaser.Class({
         //an array of enemies and players
         this.enemies = [];
         this.players = [];
+        this.currentSelectedPlayer = null; //enemy, player, anything. player on the current turn gets selected
 
         
         //  animation with key 'left', we don't need left and right as we will use one and flip the sprite
@@ -599,6 +600,8 @@ var WorldScene = new Phaser.Class({
 
     },
 
+    
+
 
     //
 
@@ -612,7 +615,58 @@ var WorldScene = new Phaser.Class({
         this.cursors.down.reset();
     },
 
+    //update collision status and stuff, maybe save currentPlayer as a global to keep track of velocity info
+    update: function (time, delta)
+    {             
+        this.reena.body.setVelocity(0);
+        
+        // Horizontal movement
+        if (this.cursors.left.isDown)
+        {
+            this.reena.body.setVelocityX(-550);
+        }
+        else if (this.cursors.right.isDown)
+        {
+            this.reena.body.setVelocityX(550);
+        }
+        // Vertical movement
+        if (this.cursors.up.isDown)
+        {
+            this.reena.body.setVelocityY(-550);
+        }
+        else if (this.cursors.down.isDown)
+        {
+            this.reena.body.setVelocityY(550);
+        }        
+
+        // Update the animation last and give left/right animations precedence over up/down animations
+        if (this.cursors.left.isDown)
+        {
+            this.reena.anims.play('left', true);
+            //this.reena.flipX = true;
+        }
+        else if (this.cursors.right.isDown)
+        {
+            this.reena.anims.play('right', true);
+            this.reena.flipX = false;
+        }
+        else if (this.cursors.up.isDown)
+        {
+            this.reena.anims.play('up', true);
+        }
+        else if (this.cursors.down.isDown)
+        {
+            this.reena.anims.play('down', true);
+        }
+        else
+        {
+            //this.reena.anims.stop();
+            this.reena.body.setVelocity(0);
+        }
+    }
+
 });
+
 
 //defines the respective stats of the units
 //Unit skills consist of skill names and a description, and the skillname will be checked to see the skill effect in the battle method
