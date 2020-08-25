@@ -243,7 +243,9 @@ var WorldScene = new Phaser.Class({
         var animations = []; //a string of animations being stored 
 
         //conversations array;
-
+        //an array of enemies and players
+        this.enemies = [];
+        this.players = [];
 
         
         //  animation with key 'left', we don't need left and right as we will use one and flip the sprite
@@ -535,9 +537,29 @@ var WorldScene = new Phaser.Class({
             frameRate: 5,
             repeat: -1
         });
+        this.cursors = this.input.keyboard.addKeys({
+            up: 'W',
+            down: 'S',
+            left: 'A',
+            right: 'D'
+        });  // keys.up, keys.down, keys.left, keys.right
+
+        //First just create the first player
+        this.reena = this.physics.add.sprite(640, 128+64, 'Reena', 6);
+        this.physics.world.bounds.width = level0.widthInPiexels;
+        
+        // don't go out of the map
+        this.physics.world.bounds.width = level0.widthInPixels;
+        this.physics.world.bounds.height = level0.heightInPixels;
+        this.reena.setCollideWorldBounds(true);
+        
+        this.physics.add.collider(this.reena, blocked);
+
+        // limit camera to map
+        this.cameras.main.setBounds(0, 0, level0.widthInPixels, level0.heightInPixels);
+        this.cameras.main.startFollow(this.reena);
+        this.cameras.main.roundPixels = true; // avoid tile bleed
+        this.reena.anims.play('up', true);
     },
-
-    
-
 });
 
