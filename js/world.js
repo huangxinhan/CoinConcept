@@ -572,8 +572,37 @@ var WorldScene = new Phaser.Class({
         yuneAnimations = ['leftyune', 'rightyune', 'attackyune', 'defeatedyune'];
         unitYune = new unitInformation(this.yune, "Yune", yuneAnimations, "yunesprite", null, unitYuneStats, null, null, 1);
         this.enemies.push(unitYune);
+        
+    },
+    /*Structure
+    NEXTTURN => ONCLICK CALL RELEASE => ON VELOCITY 0 CALL ACTIVATE SKILL 
+      ^                                                           ||
+      ||                                                           V
+     ACTIVATE SKILL CALL EXECUTE SKILL <= TIMER CHECK FOR VELOCITY 0 AND TIMED EVENT
+    */
+    //turn based system to be implemented
+    //merge player and enemy array and cycle through them with an event timer or something idk
+    //spawn an arrow near the player that increaes/decreases in length depending on the current global pointer
+    //Release is calculated differently depending on the pointer position and power, weight, stats ect. 
+    nextTurn = () =>{
 
     },
+
+    //next turn event into release function, release function checks for player velocity, if 0, trigger skill
+    release = (unitInformation) =>{
+        //take the weight and calculate
+    },
+
+    //activates a skill based on the skill list, not to be worried about in the protocall implementation
+    //We really don't need the specifics of the skills, the string here is fine, we'll match effect by strings
+    activateSkill = (skillName) =>{
+
+    },
+
+
+    //
+
+    //
 
     wake: function() {
         this.reena.body.setVelocity(0,0);
