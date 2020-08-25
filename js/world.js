@@ -547,7 +547,7 @@ var WorldScene = new Phaser.Class({
         //First just create the first player
         this.reena = this.physics.add.sprite(640, 128+64, 'Reena', 6);
         this.physics.world.bounds.width = level0.widthInPiexels;
-        
+
         // don't go out of the map
         this.physics.world.bounds.width = level0.widthInPixels;
         this.physics.world.bounds.height = level0.heightInPixels;
@@ -560,6 +560,94 @@ var WorldScene = new Phaser.Class({
         this.cameras.main.startFollow(this.reena);
         this.cameras.main.roundPixels = true; // avoid tile bleed
         this.reena.anims.play('up', true);
+        unitReenaStats = new unitStats(50, 5, 5, 5, 10); //weight determines how much knockback happens
+        reenaAnimations = ['left', 'right', 'attack', 'defeated'];
+        unitReena = new unitInformation(this.reena, "Reena", reenaAnimations, "reenasprite", null, unitReenaStats, null, null, 1);
+        //create then push to player
+        this.players.push(unitReena);
+
+        this.yune = this.physics.add.sprite(768, 900, 'Yune', 6);
+        this.yune.anims.play('rightyune', true);
+        unitYuneStats = new unitStats(50, 5, 5, 5, 10);
+        yuneAnimations = ['leftyune', 'rightyune', 'attackyune', 'defeatedyune'];
+        unitYune = new unitInformation(this.yune, "Yune", yuneAnimations, "yunesprite", null, unitYuneStats, null, null, 1);
+        this.enemies.push(unitYune);
+
     },
+
+    wake: function() {
+        this.reena.body.setVelocity(0,0);
+        this.cursors.left.reset();
+        this.cursors.right.reset();
+        this.cursors.up.reset();
+        this.cursors.down.reset();
+    },
+
 });
 
+//defines the respective stats of the units
+//Unit skills consist of skill names and a description, and the skillname will be checked to see the skill effect in the battle method
+class unitSkills{
+    constructor (skillName, description, spriteName)
+    {
+        this.skillName = skillName;
+        this.description = description; //description and skill names are both strings
+        this.spriteName = spriteName;
+    }
+}
+
+//Unit battle information consist of basic stats of a character, each stat represent different things 
+class unitStats{
+    constructor (HP, ATK, DEF, RES, WEIGHT)
+    {
+        this.hp = HP;
+        this.maxHP = HP;
+        this.atk = ATK;
+        this.def = DEF;
+        this.res = RES;
+        this.wt = WEIGHT;
+    }
+}
+
+//Unit battle information consist of the current status effect on the user
+class unitStatus{
+    constructor (statusName, statusDescription)
+    {
+        this.statusName = statusName;
+        this.statusDescription = statusDescription;
+    }
+}
+
+//Unit battle skills information. type can be magic, physical, special, or null.
+//target can be single or multi
+class unitBattleSkills{
+    constructor(battleSkillName, battleSkillDescription, mpRequired, type, target){
+        this.battleSkillName = battleSkillName;
+        this.battleSkillDescription = battleSkillDescription;
+        this.mpRequired = mpRequired;
+        this.type = type;
+        this.target = target;
+    }
+}
+
+//This class stores all unit's informations, including sprites, skills, and so on. Stored in a single global array
+/*unitData consists of phaser sprite data, unitName is the sprite name reference, Animation is an array of animation strings,
+unitSprites is a string that represents a unit's sprite, unitSkills represents a skills class, and battle info represents stats like HP, MP, ATTACK, and such
+unitStatus is the unit's current status, such as paralysis, bind, poisoned and such 
+*/
+class unitInformation {
+    constructor (unitData, unitName, unitAnimations, unitSprites, unitSkills, unitStats, unitStatus, unitBattleSkills)
+    {
+        this.unitData = unitData;
+        this.unitName = unitName;
+        this.unitAnimations = unitAnimations;
+        this.unitSprites = unitSprites;
+        this.unitSkills = unitSkills;
+        this.unitStats = unitStats;
+        this.unitStatus = unitStatus;
+        this.unitBattleSkills = unitBattleSkills;
+        this.isGuarding = false;
+        this.living = true;
+    }
+
+}
