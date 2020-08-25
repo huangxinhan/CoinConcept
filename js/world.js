@@ -596,7 +596,7 @@ var WorldScene = new Phaser.Class({
 
     //activates a skill based on the skill list, not to be worried about in the protocall implementation
     //We really don't need the specifics of the skills, the string here is fine, we'll match effect by strings
-    activateSkill: function(unitInformation){
+    activateSkill: function(skillName){
 
     },
 
