@@ -13,22 +13,13 @@ var BootScene = new Phaser.Class({
     preload: function ()
     {
         // map tiles
-        this.load.image('tiles', 'assets/map/Mapset.png');
-        this.load.image('tiles2', 'assets/map/Mapset2.png');
+        this.load.image('mapset1', 'assets/map1/mapset1.png');
         
         // map in json format
-        this.load.tilemapTiledJSON('level0', 'assets/map/level0.json');
-        this.load.tilemapTiledJSON('level1', 'assets/map/level1.json');
-        this.load.tilemapTiledJSON('level2', 'assets/map/level2.json');
-        this.load.tilemapTiledJSON('level3', 'assets/map/level3.json');
-        this.load.tilemapTiledJSON('level4', 'assets/map/level4.json');
-        this.load.tilemapTiledJSON('level5', 'assets/map/level5.json');
-        this.load.tilemapTiledJSON('level6', 'assets/map/level6.json');
-        this.load.tilemapTiledJSON('level7', 'assets/map/level7.json');
+
+
+        this.load.tilemapTiledJSON('map1', 'assets/map1/map1.json');
         
-        // enemies
-        this.load.image("dragonblue", "assets/dragonblue.png");
-        this.load.image("dragonorrange", "assets/dragonorrange.png");
         
         // load all sprites for battle UI
         this.load.image("reenasprite", "assets/sprites/Reena.png");
@@ -106,6 +97,9 @@ var BootScene = new Phaser.Class({
         //load a dialog box
         this.load.image('dialogbox', 'assets/dialogBox.png');
         this.load.image('expbackground', 'assets/expbackground.png');
+
+        //IT'S CAT TIME!! NYAN
+        this.load.spritesheet('cat', 'assets/Character Design/cat.png', {frameWidth: 128, frameHeight: 128});
 
 
 
@@ -226,10 +220,10 @@ var WorldScene = new Phaser.Class({
         //keep an array of all the npcs on this map 
         var npcs = [];
         // create the map
-        var level0 = this.make.tilemap({ key: 'level0' });
+        var level0 = this.make.tilemap({ key: 'map1' });
         
         // first parameter is the name of the tilemap in tiled
-        var tiles = level0.addTilesetImage('Mapset', 'tiles');
+        var tiles = level0.addTilesetImage('mapset1', 'mapset1');
         
         // creating the layers
         var traverse = level0.createStaticLayer('traverse', tiles, 0, 0);
@@ -237,7 +231,7 @@ var WorldScene = new Phaser.Class({
         
         // make all tiles in obstacles collidable
         blocked.setCollisionByExclusion([-1]);
-
+    
         //list of global attributes that the current player has 
 
         var animations = []; //a string of animations being stored 
@@ -254,6 +248,25 @@ var WorldScene = new Phaser.Class({
 
         
         //  animation with key 'left', we don't need left and right as we will use one and flip the sprite
+        this.anims.create({
+            key: 'cat',
+            frames: this.anims.generateFrameNumbers('cat', { frames: [0,1]}),
+            frameRate: 3,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'catleft',
+            frames: this.anims.generateFrameNumbers('cat', { frames: [2,3]}),
+            frameRate: 3,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'catright',
+            frames: this.anims.generateFrameNumbers('cat', { frames: [4,5]}),
+            frameRate: 3,
+            repeat: -1
+        });
+
         this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers('Reena', { frames: [8,9,10,11,12,13,14,15]}),
@@ -550,26 +563,23 @@ var WorldScene = new Phaser.Class({
         });  // keys.up, keys.down, keys.left, keys.right
 
         //First just create the first player
-        this.reena = this.physics.add.sprite(640, 128+64, 'Reena', 6);
+        this.cat = this.physics.add.sprite(640, 128+64, 'cat', 6);
+        this.cat.setBounce(0.75, 0.75);
         this.physics.world.bounds.width = level0.widthInPiexels;
 
         // don't go out of the map
         this.physics.world.bounds.width = level0.widthInPixels;
         this.physics.world.bounds.height = level0.heightInPixels;
-        this.reena.setCollideWorldBounds(true);
+        this.cat.setCollideWorldBounds(true);
         
-        this.physics.add.collider(this.reena, blocked);
+        this.physics.add.collider(this.cat, blocked);
 
         // limit camera to map
         this.cameras.main.setBounds(0, 0, level0.widthInPixels, level0.heightInPixels);
-        this.cameras.main.startFollow(this.reena);
+        this.cameras.main.startFollow(this.cat);
         this.cameras.main.roundPixels = true; // avoid tile bleed
-        this.reena.anims.play('up', true);
-        unitReenaStats = new unitStats(50, 5, 5, 5, 10); //weight determines how much knockback happens
-        reenaAnimations = ['left', 'right', 'attack', 'defeated'];
-        unitReena = new unitInformation(this.reena, "Reena", reenaAnimations, "reenasprite", null, unitReenaStats, null, null, true);
-        //create then push to player
-        this.players.push(unitReena);
+        this.cat.anims.play('cat', true);
+        catAnimations = ['cat', 'catleft', 'catright'];
 
         this.yune = this.physics.add.sprite(768, 900, 'Yune', 6);
         this.yune.anims.play('rightyune', true);
@@ -577,65 +587,15 @@ var WorldScene = new Phaser.Class({
         yuneAnimations = ['leftyune', 'rightyune', 'attackyune', 'defeatedyune'];
         unitYune = new unitInformation(this.yune, "Yune", yuneAnimations, "yunesprite", null, unitYuneStats, null, null, true);
         this.enemies.push(unitYune);
+
+        this.physics.world.gravity.y = 600;
         
-        this.nextTurn(); //initialize the next turn
-    },
-    /*Structure
-    NEXTTURN => ONCLICK CALL RELEASE => ON VELOCITY 0 CALL ACTIVATE SKILL 
-      ^                                                           ||
-      ||                                                           V
-     ACTIVATE SKILL CALL EXECUTE SKILL <= TIMER CHECK FOR VELOCITY 0 AND TIMED EVENT
-    */
-    //turn based system to be implemented
-    //merge player and enemy array and cycle through them with an event timer or something idk
-    //spawn an arrow near the player that increaes/decreases in length depending on the current global pointer
-    //Release is calculated differently depending on the pointer position and power, weight, stats ect. 
-    nextTurn: function(){
-        unitArray = this.players.concat(this.enemies); 
-        if (this.checkEndBattle()){
-            this.endBattle();
-            return;
-        }
-        do {
-            this.index++; //increment index
-            if (this.index >= unitArray.length){
-                this.index = 0;
-            }
-            this.currentSelectedPlayer = unitArray[this.index];
-            this.move_phase = true;
-            alert(unitArray[this.index].unitName + "'s turn");
-        } while (!unitArray[this.index].living);
-
-    },
-
-    //next turn event into release function, release function checks for player velocity, if 0, trigger skill
-    release: function(unitInformation){
-        //alert(unitInformation.unitName);
-
-    },
-
-    //activates a skill based on the skill list, not to be worried about in the protocall implementation
-    //We really don't need the specifics of the skills, the string here is fine, we'll match effect by strings
-    activateSkill: function(skillName){
-
-    },
-
-    checkEndBattle: function(){
-        //check if one side perishes
-    },
-
-    endBattle: function(){
-        //ends the battle
-        alert("you win!");
     },
 
 
-    //
-
-    //
 
     wake: function() {
-        this.reena.body.setVelocity(0,0);
+        this.cat.body.setVelocity(0,0);
         this.cursors.left.reset();
         this.cursors.right.reset();
         this.cursors.up.reset();
@@ -645,13 +605,52 @@ var WorldScene = new Phaser.Class({
     //update collision status and stuff, maybe save currentPlayer as a global to keep track of velocity info
     update: function (time, delta)
     {
-        console.log(this.move_phase);
-        if(this.move_phase === true){             
-            this.input.on('pointerdown', (pointer) => {
-                this.release(this.currentSelectedPlayer);
-                this.move_phase = false;
-            })
+        //this.cat.body.setVelocity(0);
+        
+        // Horizontal movement
+        if (this.cursors.left.isDown)
+        {
+            this.cat.body.setVelocityX(-550);
         }
+        else if (this.cursors.right.isDown)
+        {
+            this.cat.body.setVelocityX(550);
+        }
+        // Vertical movement
+        if (this.cursors.up.isDown)
+        {
+            this.cat.body.setVelocityY(-550);
+        }
+        else if (this.cursors.down.isDown)
+        {
+            this.cat.body.setVelocityY(550);
+        }        
+
+        // Update the animation last and give left/right animations precedence over up/down animations
+        if (this.cursors.left.isDown)
+        {
+            this.cat.anims.play('catleft', true);
+            //this.reena.flipX = true;
+        }
+        else if (this.cursors.right.isDown)
+        {
+            this.cat.anims.play('catright', true);
+            this.cat.flipX = false;
+        }
+        else if (this.cursors.up.isDown)
+        {
+            this.cat.anims.play('cat', true);
+        }
+        else if (this.cursors.down.isDown)
+        {
+            this.cat.anims.play('cat', true);
+        }
+        else
+        {
+            //this.reena.anims.stop();
+            //this.cat.body.setVelocity(0);
+        }
+
     }
 
 });

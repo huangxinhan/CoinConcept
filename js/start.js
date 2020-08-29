@@ -1,13 +1,14 @@
 var config = {
     type: Phaser.GRAPHICS,
     parent: 'content',
-    width: 1280,
-    height: 1024,
+    width: 1024,
+    height: 1280,
     pixelArt: true,
     physics: {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
+            friction: {y: 1, x: 1},
             debug: false // set to true to view zones
         }
     },
