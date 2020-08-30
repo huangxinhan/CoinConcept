@@ -101,6 +101,14 @@ var BootScene = new Phaser.Class({
         //IT'S CAT TIME!! NYAN
         this.load.spritesheet('cat', 'assets/Character Design/cat.png', {frameWidth: 128, frameHeight: 128});
 
+        //fonts?
+        this.load.bitmapFont('desyrel', 'assets/fonts/bitmap/desyrel.png', 'assets/fonts/bitmap/desyrel.xml');
+        this.load.bitmapFont('desyrel-pink', 'assets/fonts/bitmap/desyrel-pink.png', 'assets/fonts/bitmap/desyrel-pink.xml');
+        this.load.bitmapFont('chiller', 'assets/fonts/bitmap/chiller.png', 'assets/fonts/bitmap/chiller.xml');
+
+
+
+
 
 
     },
@@ -589,13 +597,20 @@ var WorldScene = new Phaser.Class({
         unitYune = new unitInformation(this.yune, "Yune", yuneAnimations, "yunesprite", null, unitYuneStats, null, null, true);
         this.enemies.push(unitYune);
 
+        //double jumping cat 
         this.physics.world.gravity.y = 600;
         this.doubleJump = false;
         this.doubleJumpTimer = 25;
         this.doubleJumpIndicator = false;
+
+
+        this.catmeow = ["MEOW!", "MEOWWWWW~!", "NYAN~ NYAN~"];
+        bitmaptextmeow = this.add.dynamicBitmapText(550, 500, 'desyrel-pink', 'MEOW!', 100);
+        //bitmaptextmeow.setVisible(false);
+        //bitmaptextmeow.destroy();
+
         
     },
-
 
 
     wake: function() {
@@ -604,6 +619,18 @@ var WorldScene = new Phaser.Class({
         this.cursors.right.reset();
         this.cursors.up.reset();
         this.cursors.down.reset();
+    },
+
+    //So the cat will meow and fire a string of meows that will attack stuff nyan
+    //x is the one colliding one is the one being collided on I hope
+    meow: function(){
+
+
+    },
+
+    //let's just have a universal collide function that deals with all instances 
+    collide: function(x, y){
+
     },
 
 
