@@ -589,7 +589,7 @@ var WorldScene = new Phaser.Class({
         unitYune = new unitInformation(this.yune, "Yune", yuneAnimations, "yunesprite", null, unitYuneStats, null, null, true);
         this.enemies.push(unitYune);
 
-        this.physics.world.gravity.y = 500;
+        this.physics.world.gravity.y = 1000;
         
     },
 
@@ -608,7 +608,9 @@ var WorldScene = new Phaser.Class({
     update: function (time, delta)
     {
         //this.cat.body.setVelocity(0);
-        
+        if (this.cat.body.onFloor()){
+            this.cat.body.setVelocity(0);
+        }
         // Horizontal movement
         if (this.cursors.left.isDown)
         {
@@ -621,7 +623,7 @@ var WorldScene = new Phaser.Class({
 
         if (this.cursors.up.isDown && this.cat.body.onFloor())
         {
-            this.cat.body.setVelocityY(-550);
+            this.cat.body.setVelocityY(-950);
         }
         // Update the animation last and give left/right animations precedence over up/down animations
         if (this.cursors.left.isDown)
@@ -647,6 +649,7 @@ var WorldScene = new Phaser.Class({
             //this.reena.anims.stop();
             //this.cat.body.setVelocity(0);
         }
+
 
     }
 
