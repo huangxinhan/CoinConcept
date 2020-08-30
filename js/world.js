@@ -605,11 +605,13 @@ var WorldScene = new Phaser.Class({
 
 
         this.catmeow = ["MEOW!", "MEOWWWWW~!", "NYAN~ NYAN~"];
-        bitmaptextmeow = this.add.dynamicBitmapText(550, 500, 'desyrel-pink', 'MEOW!', 100);
-        //bitmaptextmeow.setVisible(false);
-        //bitmaptextmeow.destroy();
-
-        
+        bitmaptextmeow = this.add.dynamicBitmapText(550, 500, 'desyrel-pink', 'MEOW!', 80);
+        this.physics.world.enable(bitmaptextmeow);
+        bitmaptextmeow.setVisible(false);
+        bitmaptextmeow.setActive(false);
+        this.input.on("pointerdown", ()=>{
+            this.meow();
+        })
     },
 
 
@@ -624,8 +626,12 @@ var WorldScene = new Phaser.Class({
     //So the cat will meow and fire a string of meows that will attack stuff nyan
     //x is the one colliding one is the one being collided on I hope
     meow: function(){
-
-
+        bitmaptextmeow.setActive(true);
+        bitmaptextmeow.setVisible(true);
+        bitmaptextmeow.x = this.cat.x;
+        bitmaptextmeow.y = this.cat.y;
+        this.physics.moveTo(bitmaptextmeow, this.scene.get("WorldScene").input.activePointer.x, 
+        this.scene.get("WorldScene").input.activePointer.y, 540);
     },
 
     //let's just have a universal collide function that deals with all instances 
