@@ -604,7 +604,8 @@ var WorldScene = new Phaser.Class({
         this.doubleJumpIndicator = false;
 
 
-        this.catmeow = ["MEOW!", "MEOWWWWW~!", "NYAN~ NYAN~"];
+        this.catmeow = ["MEOW!", "MEOWWWWW~!", "NYAN~ NYAN~ NYAN~", "Mew~?", "Cheer-up-Nyan~!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!"
+    ,"MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!"];
         bitmaptextmeow = this.add.dynamicBitmapText(550, 500, 'desyrel-pink', 'MEOW!', 80);
         this.physics.world.enable(bitmaptextmeow);
         bitmaptextmeow.setVisible(false);
@@ -636,14 +637,16 @@ var WorldScene = new Phaser.Class({
     //So the cat will meow and fire a string of meows that will attack stuff nyan
     //x is the one colliding one is the one being collided on I hope
     meow: function(){
-        bitmaptextmeow.setActive(true);
-        bitmaptextmeow.setVisible(true);
-        bitmaptextmeow.x = this.cat.x;
-        bitmaptextmeow.y = this.cat.y;
-        pickMeow=  Phaser.Math.RND.between(0, 2);
-        bitmaptextmeow.text = this.catmeow[pickMeow]
-        this.physics.moveTo(bitmaptextmeow, this.scene.get("WorldScene").input.activePointer.x, 
-        this.scene.get("WorldScene").input.activePointer.y, 1000);
+        if(!bitmaptextmeow.active){
+            bitmaptextmeow.setActive(true);
+            bitmaptextmeow.setVisible(true);
+            bitmaptextmeow.x = this.cat.x;
+            bitmaptextmeow.y = this.cat.y;
+            pickMeow=  Phaser.Math.RND.between(0, 20);
+            bitmaptextmeow.text = this.catmeow[pickMeow]
+            this.physics.moveTo(bitmaptextmeow, this.scene.get("WorldScene").input.activePointer.x, 
+            this.scene.get("WorldScene").input.activePointer.y, 1000);
+        }
     },
 
     //let's just have a universal collide function that deals with all instances 
