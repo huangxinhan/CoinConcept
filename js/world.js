@@ -609,6 +609,16 @@ var WorldScene = new Phaser.Class({
         this.physics.world.enable(bitmaptextmeow);
         bitmaptextmeow.setVisible(false);
         bitmaptextmeow.setActive(false);
+        bitmaptextmeow.body.setAllowGravity(false);
+        bitmaptextmeow.body.setCollideWorldBounds(true);
+        bitmaptextmeow.body.onWorldBounds = true;
+
+        
+        this.physics.world.on('worldbounds', ()=>{
+            bitmaptextmeow.setVisible(false);
+            bitmaptextmeow.setActive(false);
+        });
+
         this.input.on("pointerdown", ()=>{
             this.meow();
         })
@@ -631,7 +641,7 @@ var WorldScene = new Phaser.Class({
         bitmaptextmeow.x = this.cat.x;
         bitmaptextmeow.y = this.cat.y;
         this.physics.moveTo(bitmaptextmeow, this.scene.get("WorldScene").input.activePointer.x, 
-        this.scene.get("WorldScene").input.activePointer.y, 540);
+        this.scene.get("WorldScene").input.activePointer.y, 1000);
     },
 
     //let's just have a universal collide function that deals with all instances 
