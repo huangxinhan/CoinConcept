@@ -1,5 +1,5 @@
 var config = {
-    type: Phaser.GRAPHICS,
+    type: Phaser.AUTO,
     parent: 'content',
     width: 2048,
     height: 1280,
@@ -9,7 +9,7 @@ var config = {
         arcade: {
             gravity: { y: 0 },
             friction: {y: 1, x: 1},
-            debug: false // set to true to view zones
+            debug: true // set to true to view zones
         }
     },
     scene: [

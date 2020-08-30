@@ -590,8 +590,9 @@ var WorldScene = new Phaser.Class({
         this.cat.anims.play('cat', true);
         catAnimations = ['cat', 'catleft', 'catright'];
 
-        this.yune = this.physics.add.sprite(768, 900, 'Yune', 6);
+        this.yune = this.physics.add.sprite(782, 128, 'Yune', 6);
         this.yune.anims.play('rightyune', true);
+        this.yune.body.setAllowGravity(false);
         unitYuneStats = new unitStats(50, 5, 5, 5, 10);
         yuneAnimations = ['leftyune', 'rightyune', 'attackyune', 'defeatedyune'];
         unitYune = new unitInformation(this.yune, "Yune", yuneAnimations, "yunesprite", null, unitYuneStats, null, null, true);
@@ -603,10 +604,18 @@ var WorldScene = new Phaser.Class({
         this.doubleJumpTimer = 25;
         this.doubleJumpIndicator = false;
 
+        //All words here
 
         this.catmeow = ["MEOW!", "MEOWWWWW~!", "NYAN~ NYAN~ NYAN~", "Mew~?", "Cheer-up-Nyan~!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!"
     ,"MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!"];
-        bitmaptextmeow = this.add.dynamicBitmapText(550, 500, 'desyrel-pink', 'MEOW!', 80);
+
+        this.level1words1 = ["Such a bad day today", "I've had enough", "This is the worst", "What's that sound?", "Aww it's a cat", "Everything is ok for now", null];
+        this.level1negative1 = [true, true, true, true, true, false];
+        this.level1words2 = ["Why did it turn out this way", "hmm?", "What a fluffy cat!", "Everything is ok for now", null];
+        this.level1negative2 = [true, true, true, false];
+
+
+        bitmaptextmeow = this.add.dynamicBitmapText(550, 500, 'desyrel-pink', 'MEOW!', 80, 1);
         this.physics.world.enable(bitmaptextmeow);
         bitmaptextmeow.setVisible(false);
         bitmaptextmeow.setActive(false);
@@ -619,6 +628,17 @@ var WorldScene = new Phaser.Class({
             bitmaptextmeow.setVisible(false);
             bitmaptextmeow.setActive(false);
         });
+
+        words1 = this.add.dynamicBitmapText(182, 128 + 200, 'chiller', this.level1words1[0], 80, 1);
+        words2 = this.add.dynamicBitmapText(882, 128 + 200, 'chiller', this.level1words2[0], 80, 1);
+        this.physics.world.enable(words1);
+        this.physics.world.enable(words2);
+        words1.body.setAllowGravity(false);
+        words2.body.setAllowGravity(false);
+        words1.body.setImmovable(true);
+        words2.body.setImmovable(true);
+        this.physics.add.collider(bitmaptextmeow, words1, this.collide, false, this);
+        this.physics.add.collider(bitmaptextmeow, words2, this.collide, false, this);
 
         this.input.on("pointerdown", ()=>{
             this.meow();
@@ -651,7 +671,9 @@ var WorldScene = new Phaser.Class({
 
     //let's just have a universal collide function that deals with all instances 
     collide: function(x, y){
-
+        x.setActive(false);
+        x.setVisible(false);
+        console.log(y.getTextBounds())
     },
 
 
@@ -788,5 +810,5 @@ class unitInformation {
         this.isGuarding = false;
         this.living = true;
     }
-
 }
+
