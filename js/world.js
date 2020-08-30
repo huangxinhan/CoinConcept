@@ -640,6 +640,8 @@ var WorldScene = new Phaser.Class({
         bitmaptextmeow.setVisible(true);
         bitmaptextmeow.x = this.cat.x;
         bitmaptextmeow.y = this.cat.y;
+        pickMeow=  Phaser.Math.RND.between(0, 2);
+        bitmaptextmeow.text = this.catmeow[pickMeow]
         this.physics.moveTo(bitmaptextmeow, this.scene.get("WorldScene").input.activePointer.x, 
         this.scene.get("WorldScene").input.activePointer.y, 1000);
     },
