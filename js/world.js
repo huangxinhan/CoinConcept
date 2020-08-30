@@ -118,7 +118,14 @@ var BootScene = new Phaser.Class({
         // start the WorldScene
         // Here we actually create a splash art and a Menu
         // Well we don't have the splash art at the moment so let's just do the menu
-        
+        //  animation with key 'left', we don't need left and right as we will use one and flip the sprite
+        this.anims.create({
+            key: 'cat',
+            frames: this.anims.generateFrameNumbers('cat', { frames: [0,1]}),
+            frameRate: 3,
+            repeat: -1
+        });
+
         this.cameras.main.setBackgroundColor('rgba(250, 218, 94, 1)');
         this.graphics = this.add.graphics();
         this.graphics.lineStyle(1, 0xffffff);
@@ -135,9 +142,12 @@ var BootScene = new Phaser.Class({
         
         this.graphics.strokeRect(90, 900, 300, 50);
         this.graphics.fillRect(90, 900, 300, 50);
+        this.fakecat = this.physics.add.sprite(900, 800, 'cat', 6);
+        this.fakecat.anims.play('cat', true);
+        this.fakecat.setScale(3);
 
         var text = this.add.text(1280/2 - 200,
-			200, "World Calling: Three Realms", {
+			200, "Nyan Nyan SUPER CAT!!", {
 				color: "#000000",
 				align: "center",
 				fontWeight: 'bold',
@@ -609,13 +619,7 @@ var WorldScene = new Phaser.Class({
         this.catmeow = ["MEOW!", "MEOWWWWW~!", "NYAN~ NYAN~ NYAN~", "Mew~?", "Cheer-up-Nyan~!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!"
     ,"MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!"];
 
-        this.level1words1 = ["Such a bad day today", "I've had enough", "This is the worst", "What's that sound?", "Aww it's a cat", "Everything is ok for now", null];
-        this.level1negative1 = [true, true, true, true, true, false];
-        this.level1words2 = ["Why did it turn out this way", "hmm?", "What a fluffy cat!", "Everything is ok for now", null];
-        this.level1negative2 = [true, true, true, false];
-
-
-        bitmaptextmeow = this.add.dynamicBitmapText(550, 500, 'desyrel-pink', 'MEOW!', 80, 1);
+        bitmaptextmeow = this.add.dynamicBitmapText(550, 500, 'desyrel-pink', 'MEOW!', 50, 1);
         this.physics.world.enable(bitmaptextmeow);
         bitmaptextmeow.setVisible(false);
         bitmaptextmeow.setActive(false);
@@ -628,17 +632,29 @@ var WorldScene = new Phaser.Class({
             bitmaptextmeow.setVisible(false);
             bitmaptextmeow.setActive(false);
         });
+        wordArray1 = ["Such a bad day today", "I've had enough", "This is the worst", "What's that sound?", "Aww it's a cat", "Everything is ok for now", null];
+        wordArray2 = ["Why did it turn out this way", "hmm?", "What a fluffy cat!", "Everything is ok for now", null];
 
-        words1 = this.add.dynamicBitmapText(182, 128 + 200, 'chiller', this.level1words1[0], 80, 1);
-        words2 = this.add.dynamicBitmapText(882, 128 + 200, 'chiller', this.level1words2[0], 80, 1);
+        word1 = new wordsArray(wordArray1, 0);
+        word2 = new wordsArray(wordArray2, 1);
+
+        wordArray = [word1, word2];
+
+        words1 = this.add.dynamicBitmapText(182, 128 + 200, 'chiller', wordArray1[0], 60, 1);
+        words2 = this.add.dynamicBitmapText(882, 128 + 200, 'chiller', wordArray2[0], 60, 1);
         this.physics.world.enable(words1);
         this.physics.world.enable(words2);
         words1.body.setAllowGravity(false);
         words2.body.setAllowGravity(false);
         words1.body.setImmovable(true);
         words2.body.setImmovable(true);
+
         this.physics.add.collider(bitmaptextmeow, words1, this.collide, false, this);
         this.physics.add.collider(bitmaptextmeow, words2, this.collide, false, this);
+        words1.arrayIndex = 0;
+        words2.arrayIndex = 1; //setting an array index attribute dynamically
+
+
 
         this.input.on("pointerdown", ()=>{
             this.meow();
@@ -673,7 +689,15 @@ var WorldScene = new Phaser.Class({
     collide: function(x, y){
         x.setActive(false);
         x.setVisible(false);
-        console.log(y.getTextBounds())
+        temp = wordArray[y.arrayIndex].words[wordArray[y.arrayIndex].index++];
+        if (temp === null){
+            y.setActive(false);
+            y.setVisible(false);
+        }
+        else{
+            y.text = temp;
+        }
+        //y.text = wordArray[y.arrayIndex].words[wordArray[y.arrayIndex].index++]; //wtf am I doing but it works
     },
 
 
@@ -811,4 +835,20 @@ class unitInformation {
         this.living = true;
     }
 }
+
+class wordsArray{
+    constructor(words, index){
+        this.words = words; //an array of sentences
+        this.index = index; //the index of the words array or something 
+    }
+}
+
+class bitmapArray{
+    constructor(bitmap, index){
+        this.bitmap = bitmap;
+        this.index = index;
+    }
+}
+
+
 
