@@ -589,7 +589,10 @@ var WorldScene = new Phaser.Class({
         unitYune = new unitInformation(this.yune, "Yune", yuneAnimations, "yunesprite", null, unitYuneStats, null, null, true);
         this.enemies.push(unitYune);
 
-        this.physics.world.gravity.y = 1000;
+        this.physics.world.gravity.y = 600;
+        this.doubleJump = false;
+        this.doubleJumpTimer = 25;
+        this.doubleJumpIndicator = false;
         
     },
 
@@ -623,7 +626,15 @@ var WorldScene = new Phaser.Class({
 
         if (this.cursors.up.isDown && this.cat.body.onFloor())
         {
-            this.cat.body.setVelocityY(-950);
+            this.cat.body.setVelocityY(-600);
+            this.doubleJumpIndicator = true;
+        }
+        else if (this.cursors.up.isDown && this.doubleJump && !this.cat.body.onFloor()){
+            this.cat.body.setVelocityY(-600 - 200);
+            this.doubleJump = false;
+        }
+        else if (this.cursors.down.isDown){
+            this.cat.body.setVelocityY(550);
         }
         // Update the animation last and give left/right animations precedence over up/down animations
         if (this.cursors.left.isDown)
@@ -648,6 +659,15 @@ var WorldScene = new Phaser.Class({
         {
             //this.reena.anims.stop();
             //this.cat.body.setVelocity(0);
+        }
+        
+        if (this.doubleJumpIndicator){
+            this.doubleJumpTimer--;
+        }
+        if (this.doubleJumpTimer <= 0){
+            this.doubleJump = true;
+            this.doubleJumpTimer = 25;
+            this.doubleJumpIndicator = false;
         }
 
 
