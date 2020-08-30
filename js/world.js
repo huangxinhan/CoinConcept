@@ -13,7 +13,7 @@ var BootScene = new Phaser.Class({
     preload: function ()
     {
         // map tiles
-        this.load.image('mapset1', 'assets/map1/mapset1.png');
+        this.load.image('mapset1', 'assets/map1/mapset1.jpg');
         
         // map in json format
 
@@ -564,8 +564,9 @@ var WorldScene = new Phaser.Class({
 
         //First just create the first player
         this.cat = this.physics.add.sprite(640, 128+64, 'cat', 6);
-        this.cat.setBounce(0.75, 0.75);
+        this.cat.setBounce(0.1, 0.1);
         this.physics.world.bounds.width = level0.widthInPiexels;
+        this.power = 0;
 
         // don't go out of the map
         this.physics.world.bounds.width = level0.widthInPixels;
@@ -588,19 +589,20 @@ var WorldScene = new Phaser.Class({
         unitYune = new unitInformation(this.yune, "Yune", yuneAnimations, "yunesprite", null, unitYuneStats, null, null, true);
         this.enemies.push(unitYune);
 
-        this.physics.world.gravity.y = 600;
+        this.physics.world.gravity.y = 500;
         
     },
 
 
 
     wake: function() {
-        this.cat.body.setVelocity(0,0);
+        //this.cat.body.setVelocity(0,0);
         this.cursors.left.reset();
         this.cursors.right.reset();
         this.cursors.up.reset();
         this.cursors.down.reset();
     },
+
 
     //update collision status and stuff, maybe save currentPlayer as a global to keep track of velocity info
     update: function (time, delta)
@@ -616,16 +618,11 @@ var WorldScene = new Phaser.Class({
         {
             this.cat.body.setVelocityX(550);
         }
-        // Vertical movement
-        if (this.cursors.up.isDown)
+
+        if (this.cursors.up.isDown && this.cat.body.onFloor())
         {
             this.cat.body.setVelocityY(-550);
         }
-        else if (this.cursors.down.isDown)
-        {
-            this.cat.body.setVelocityY(550);
-        }        
-
         // Update the animation last and give left/right animations precedence over up/down animations
         if (this.cursors.left.isDown)
         {
