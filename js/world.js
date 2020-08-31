@@ -366,6 +366,7 @@ var WorldScene = new Phaser.Class({
         this.anims.create({
             key: 'attackyune',
             frames: this.anims.generateFrameNumbers('Yune', {frames: [16,17,18,19,20,21,22,23]}),
+            repeat: -1,
             frameRate: 5,
         });
         this.anims.create({
@@ -601,7 +602,7 @@ var WorldScene = new Phaser.Class({
         catAnimations = ['cat', 'catleft', 'catright'];
 
         this.yune = this.physics.add.sprite(782, 128, 'Yune', 6);
-        this.yune.anims.play('rightyune', true);
+        this.yune.anims.play('attackyune', true);
         this.yune.body.setAllowGravity(false);
         unitYuneStats = new unitStats(50, 5, 5, 5, 10);
         yuneAnimations = ['leftyune', 'rightyune', 'attackyune', 'defeatedyune'];
@@ -619,7 +620,7 @@ var WorldScene = new Phaser.Class({
         this.catmeow = ["MEOW!", "MEOWWWWW~!", "NYAN~ NYAN~ NYAN~", "Mew~?", "Cheer-up-Nyan~!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!"
     ,"MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!","MEOW!"];
 
-        bitmaptextmeow = this.add.dynamicBitmapText(550, 500, 'desyrel-pink', 'MEOW!', 50, 1);
+        bitmaptextmeow = this.add.dynamicBitmapText(-550, 0, 'desyrel-pink', 'MEOW!', 50, 1);
         this.physics.world.enable(bitmaptextmeow);
         bitmaptextmeow.setVisible(false);
         bitmaptextmeow.setActive(false);
@@ -632,10 +633,11 @@ var WorldScene = new Phaser.Class({
             bitmaptextmeow.setVisible(false);
             bitmaptextmeow.setActive(false);
         });
-        wordArray1 = ["Such a bad day today", "I've had enough", "This is the worst", "What's that sound?", "Aww it's a cat", "Everything is ok for now", null];
+        wordArray1 = ["Such a bad day today", "I've had enough", "This is the worst", "I don't know why it turned out this way",
+        "It's not my fault!", "Leave me alone", "What's that sound?", "Aww it's a cat", "It's so fluffy", "Everything is ok for now", null];
         wordArray2 = ["Why did it turn out this way", "hmm?", "What a fluffy cat!", "Everything is ok for now", null];
 
-        word1 = new wordsArray(wordArray1, 0);
+        word1 = new wordsArray(wordArray1, 1);
         word2 = new wordsArray(wordArray2, 1);
 
         wordArray = [word1, word2];
@@ -648,6 +650,14 @@ var WorldScene = new Phaser.Class({
         words2.body.setAllowGravity(false);
         words1.body.setImmovable(true);
         words2.body.setImmovable(true);
+        words1.body.setCollideWorldBounds();
+        words2.body.setCollideWorldBounds();
+        words1.body.setBounce(1, 1);
+        words2.body.setBounce(1, 1);
+        words1.body.setVelocity(300, 300);
+        words2.body.setVelocity(300, -300);
+
+
 
         this.physics.add.collider(bitmaptextmeow, words1, this.collide, false, this);
         this.physics.add.collider(bitmaptextmeow, words2, this.collide, false, this);
@@ -689,8 +699,14 @@ var WorldScene = new Phaser.Class({
     collide: function(x, y){
         x.setActive(false);
         x.setVisible(false);
+        x.x = -500;
+        x.y = -500;
         temp = wordArray[y.arrayIndex].words[wordArray[y.arrayIndex].index++];
         if (temp === null){
+            y.x = - 50;
+            y.y = - 50;
+            y.body.setCollideWorldBounds(false);
+            y.body.setCollideWorldBounds(false);
             y.setActive(false);
             y.setVisible(false);
         }
