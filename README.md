@@ -1,5 +1,5 @@
 # CoinConcept
 Nevermind this is now cat land meow~ <br />
-    |\__/,|   (`\                 <br />
-  _.|o o  |_   ) )                <br />
+  _ |\__/,|   (`\                 <br />
+  -.|o o  |-   ) )                <br />
 -(((---(((--------                <br />
